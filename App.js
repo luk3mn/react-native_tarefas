@@ -1,9 +1,30 @@
+// Instalando a animação
+// > expo install react-native-animatable
+
+// Importação das bibliotecas
 import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, FlatList } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
+import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, FlatList, Modal } from "react-native"
+import { Ionicons } from "@expo/vector-icons";
+import * as Animatable from 'react-native-animatable';
+
+// Importação dos componentes
+import TaskList from "./src/components/TaskList";
+
+// Animar o componente "TouchableOpacity"
+const AnimatableBtn = Animatable.createAnimatableComponent(TouchableOpacity);
 
 export default function App() {
 
+  const [task, setTask] = useState([
+    { key: 1, task: 'Comprar pão'},
+    { key: 2, task: 'Estudar React native'},
+    { key: 3, task: 'Ir na academia hoje a noite'},
+    { key: 4, task: 'Comprar chocolate e coca cola'},
+    { key: 5, task: 'Assistir o 1 video'},
+  ]);
+
+  const [open, setOpen] = useState(false);
+  
   return (
     <SafeAreaView style={styles.container}> {/* SafeAreaView -> Serve para ajustar a visualização no iphone, no android fica normal */}
       <StatusBar backgroundColor="#121d31" barStyle="light-content" />
@@ -12,17 +33,29 @@ export default function App() {
         <Text style={styles.title}> Minhas tarefas </Text>
       </View>
 
-      {/* Lista */}
+      {/* Construção da lista */}
       <FlatList 
+        marginHorizontal={10}
         showsHorizontalScrollIndicator={false}
-        data={}
-        keyExtractor={}
-        renderItem={}
+        data={task}
+        keyExtractor={ (item) => String(item.key) }
+        renderItem={ ({ item }) => <TaskList data={item} /> }
       />
 
-      <TouchableOpacity style={styles.fab}>
+      {/* Tela modal */}
+      <Modal animationType="slide" transparent={false} visible={open}>
+        <Text> Modal 12 </Text>
+      </Modal>
+
+      {/* Botão para add nova tarefa */}
+      <AnimatableBtn 
+        style={styles.fab}
+        animation="bounceInUp"
+        duration={1500}
+        onPress={ () => setOpen(true) }
+      >
         <Ionicons name="ios-add" size={35} color={"#FFF"} />
-      </TouchableOpacity>
+      </AnimatableBtn>
     </SafeAreaView>
   );
 }
