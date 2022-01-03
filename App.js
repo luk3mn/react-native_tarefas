@@ -2,7 +2,7 @@
 // > expo install react-native-animatable
 
 // Importação das bibliotecas
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, FlatList, Modal, TextInput } from "react-native"
 import { Ionicons } from "@expo/vector-icons";
 import * as Animatable from 'react-native-animatable';
@@ -12,6 +12,8 @@ import TaskList from "./src/components/TaskList";
 
 // Animar o componente "TouchableOpacity"
 const AnimatableBtn = Animatable.createAnimatableComponent(TouchableOpacity);
+
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export default function App() {
 
@@ -27,6 +29,30 @@ export default function App() {
   const [task, setTask] = useState([]); // Inicializa como um vetor vazio
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
+
+  // Buscando todas as tarefas ao iniciar o app
+  useEffect(() => {
+    async function loadTasks() {
+      const taskStorage = await AsyncStorage.getItem('@task')
+      
+      if (taskStorage) {
+        setTask(JSON.parse(taskStorage));
+      }
+
+
+    }	
+    loadTasks();
+  }, []); // interpreta que o array esta vazio
+
+  // salvando caso
+  useEffect(() => {
+    
+    async function saveTasks() {
+      await AsyncStorage.setItem('@task', JSON.stringify(task));
+    }
+
+    saveTasks();
+  }, [task]); // monitora o task
 
   function handleAdd() {
     if (input === '') return; // se o campo estiver vazio, ele retorna e não faz nada
